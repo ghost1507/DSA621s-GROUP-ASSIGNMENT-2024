@@ -85,4 +85,77 @@ service /programmedev on httpListener {
             return "No courses are due for review!";
         }
     }
-    
+  //Retrieve all the programmes that belong to the same faculty
+    resource function get faculty(string faculty) returns table<Programme> key(programmeCode)|string {
+        //  Empty table for storing programmes in the same faculty
+        table<Programme> key(programmeCode) sameFaculty = table [];
+
+        // Iterate through all programmes
+        foreach Programme prg in programmes {
+            if (string:equalsIgnoreCaseAscii(prg.faculty, faculty)) {
+                // Add programme to sameFaculty table if it matches the given faculty
+                sameFaculty.add(prg);
+            }
+        }
+
+        // If programmes are found in the faculty, return them
+        if (sameFaculty.length() > 0) {
+            return sameFaculty;
+        } else {
+            // If no programmes are found in the faculty, return an error message
+            return "Faculty " + faculty + " does not exist!!";
+        }
+    }
+
+    // Update an existing programme's information according to the programme code.
+
+    resource function put updateProgramme(Programme prg) returns string {
+        boolean isProgrammeFound = false;
+
+        // Check if the programme with the given programmeCode exists
+        foreach Programme existingPrg in programmes {
+            if (string:equalsIgnoreCaseAscii(existingPrg.programmeCode, prg.programmeCode)) {
+                // If found, update the programme details
+                _ = programmes.remove(existingPrg.programmeCode); // Remove the existing record
+                error? err = programmes.put(prg); // Add the updated programme
+                if (err is error) {
+                    return string `Error, ${err.message()}`;
+                }
+                isProgrammeFound = true;
+                break; // Exit loop after updating the programme
+            }
+        }
+
+        if (!isProgrammeFound) {
+            return "Programme not found for update.";
+        }
+
+        else {
+            return string `${prg.programmeCode} updated successfully.`;
+        }
+    }
+
+    // Delete a programme's record
+    resource function delete deleteProgramme(string programmeCode) returns string {
+        // A flag to check if the programme exists
+        boolean isProgrammeFound = false;
+
+        foreach Programme prg in programmes {
+            // Use string:equalsIgnoreCase() to compare programme codes, ignoring case
+            if (string:equalsIgnoreCaseAscii(prg.programmeCode, programmeCode)) {
+                // Remove the programme if found
+                _ = programmes.remove(prg.programmeCode);
+                isProgrammeFound = true; // Set the flag to true as the programme was found
+                break; // Exit the loop since the programme is found and deleted
+            }
+        }
+
+        if (isProgrammeFound) {
+            return "The programme " + programmeCode + " has been deleted.";
+        } else {
+            return "Programme not found for code: " + programmeCode;
+        }
+    }
+
+}
+   
