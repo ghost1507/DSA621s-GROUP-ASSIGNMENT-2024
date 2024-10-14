@@ -43,7 +43,6 @@ function processStandardDelivery(string requestStr) returns error? {
     check sendConfirmation(request);
 }
 
-
 function sendConfirmation(json request) returns error? {
     kafka:Producer kafkaProducer = check createKafkaProducer();
     json confirmation = check createConfirmationJson(request);
