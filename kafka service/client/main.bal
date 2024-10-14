@@ -92,6 +92,7 @@ function displaySubmissionConfirmation(string requestId) {
     io:println("Your tracking number is: " + requestId);
     io:println("You can use this tracking number to check the status of your shipment.");
 }
+
 function trackShipment() returns error? {
     string trackingNumber = io:readln("Enter tracking number: ");
     json trackingRequest = { "requestId": trackingNumber };
