@@ -23,7 +23,6 @@ public function main() returns error? {
     }
 }
 
-
 // Setup Kafka consumer with specific configuration
 function setupKafkaConsumer() returns kafka:Consumer|error {
     kafka:ConsumerConfiguration consumerConfigs = {
