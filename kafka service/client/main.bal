@@ -2,8 +2,6 @@ import ballerina/io;
 import ballerinax/kafka;
 import ballerina/uuid;
 
-
-
 public function main() returns error? {
     io:println("Welcome to the Logistics System");
     check runMainMenu();
